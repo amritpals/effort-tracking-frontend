@@ -1,3 +1,10 @@
+if (storageAvailable('localStorage')) {
+  // Yippee! We can use localStorage awesomeness
+  localStorage.baseURL = "http://localhost:8080/WSRTool/";
+} else {
+  // Too bad, no localStorage for us
+}
+
 // Create the httpRequest object.
 function createCORSRequest(method, url) {
   var httpRequest = new XMLHttpRequest();
@@ -35,4 +42,19 @@ function queryStringToJsonString(str){
       }
   });
   return (JSON.stringify(result));
+}
+
+
+/* Function to check if the browser supports Storage API */
+function storageAvailable(type) {
+	try {
+		var storage = window[type],
+			x = '__storage_test__';
+		storage.setItem(x, x);
+		storage.removeItem(x);
+		return true;
+	}
+	catch(e) {
+		return false;
+	}
 }
