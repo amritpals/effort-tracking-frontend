@@ -78,10 +78,10 @@ function createResource(e){
 var currentPage = this.window.location.pathname;
 var viewUser = "admin-view";
 if(currentPage.includes(viewUser)){
-  getResourceData('http://localhost:8080/WSRTool/User');
+  getViewUserData('http://localhost:8080/WSRTool/User');
 }
 
-function getResourceData(url){
+function getViewUserData(url){
   var method = "GET";
   var httpRequest = createCORSRequest(method, url);
   if (!httpRequest) {
@@ -257,4 +257,109 @@ function deleteResource(e){
   httpRequest.open(method, url, true);
   httpRequest.setRequestHeader("Content-Type", encoding);
   httpRequest.send();
+}
+
+/* Assign Screen JavaScript */
+var assignUser = "admin-assign-user";
+if(currentPage.includes(assignUser)){
+  getAssignProjectData('http://localhost:8080/WSRTool/Project');
+  getAssignUserData('http://localhost:8080/WSRTool/User');
+}
+function getAssignProjectData(url){
+  var method = "GET";
+  var httpRequest = createCORSRequest(method, url);
+  if (!httpRequest) {
+    console.log('CORS not supported');
+    return;
+  }
+  httpRequest.onreadystatechange = function(){
+    if(httpRequest.readyState == 4 && httpRequest.status == 200){
+      if(currentPage.includes(assignUser)){
+        var objs = JSON.parse(httpRequest.response);
+
+        if (storageAvailable('localStorage')) {
+        	// Yippee! We can use localStorage awesomeness
+          localStorage.projectData = httpRequest.response;
+        }
+        else {
+        	// Too bad, no localStorage for us
+        }
+
+        var selectProject = document.getElementById("projectSelect");
+        for(var key in objs){
+          for(var subkey in objs[key]){
+            var options = document.createElement('option');
+            if(subkey == "projectName"){
+              options.name = subkey;
+              options.value = objs[key]['id'];
+              options.innerHTML = objs[key][subkey];
+              selectProject.appendChild(options);
+            }
+          }
+        }
+      }
+    }
+  }
+  httpRequest.onerror = function() {
+    console.log('Woops, there was an error making the request : ');
+  };
+  httpRequest.open(method, url, true);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  httpRequest.send();
+}
+function getAssignUserData(url){
+  var method = "GET";
+  var httpRequest = createCORSRequest(method, url);
+  if (!httpRequest) {
+    console.log('CORS not supported');
+    return;
+  }
+  httpRequest.onreadystatechange = function(){
+    if(httpRequest.readyState == 4 && httpRequest.status == 200){
+      if(currentPage.includes(assignUser)){
+        var objs = JSON.parse(httpRequest.response);
+        var selectUser = document.getElementById("userSelect");
+        for(var key in objs){
+          for(var subkey in objs[key]){
+            var options = document.createElement('option');
+            if(subkey == "firstName"){
+              options.value = objs[key]['id'];
+              options.innerHTML = objs[key][subkey];
+              selectUser.appendChild(options);
+            }
+          }
+        }
+      }
+    }
+  }
+  httpRequest.onerror = function() {
+    console.log('Woops, there was an error making the request : ');
+  };
+  httpRequest.open(method, url, true);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  httpRequest.send();
+}
+
+var assignProjectUser = document.getElementById('assign-user');
+/* Assign callback functions when button is pressed */
+if(assignProjectUser != null){
+    assignProjectUser.addEventListener("submit", fxn_assignProjectUser);
+}
+function fxn_assignProjectUser(e){
+  e.preventDefault();
+
+  /* Extracting form's data */
+  var formData = JSON.parse(queryStringToJsonString($("#assign-user").serialize()));
+  var projectData = JSON.parse(localStorage.projectData);
+  console.log(formData['projectSelect']);
+  for(var j in formData){
+    console.log(j + " - " + formData[j]);
+  }
+  for(var i in projectData){
+    if(formData['projectSelect'] == projectData[i]['id']){
+      console.log(projectData[i]['id']);
+    }
+  }
+
+
 }
