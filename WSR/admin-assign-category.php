@@ -3,26 +3,18 @@
 
 		<div class="container app-container">
 			<div class="page-title">
-				<h2>Assign User</h2>
+				<h2>Assign Category</h2>
 			</div>
-			<div class="app-section create-user-form">
-				<form>
+			<div class="app-section assign-category-form">
+				<form id="assign-category">
 					<div class="form-group">
 						<label for="projectSelect">Select Project</label>
-						<select class="form-control" id="projectSelect" multiple="multiple">
-						  <option value="Abc">Abc Project</option>
-						  <option value="Def">Def Project</option>
-						  <option value="Ghi">Ghi Project</option>
-						  <option value="Jkl">Jkl Project</option>
+						<select class="form-control" name="projectSelect" id="projectSelect">
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="userSelect">Select User</label>
-						<select class="form-control" id="userSelect" multiple="multiple">
-						  <option value="Abcd">Abcd</option>
-						  <option value="Defh">Defh</option>
-						  <option value="Ghij">Ghij</option>
-						  <option value="Jklm">Jklm</option>
+						<label for="categorySelect">Select Task Category</label>
+						<select class="form-control" name="categorySelect" id="categorySelect" multiple="multiple">
 						</select>
 					</div>
 					<button type="submit" class="btn btn-primary">Save</button>
