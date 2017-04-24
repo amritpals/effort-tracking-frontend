@@ -1,0 +1,166 @@
+html, body {
+	color: #aaa;
+	font-family: "Open Sans", sans-serif;
+	background-color: #f9f9f9;
+	/*height: 100%;*/
+}
+a, a:hover, a:link, a:visited, a:active {
+	text-decoration: none;
+	color: #aaa;
+}
+* {
+	/*border: 1px solid #ccc;*/
+}
+ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.container {
+	/*border: 1px solid red;*/
+}
+.login {
+	margin-top: 80px;
+}
+.branding {
+	width: 185px;
+	height: 65px;
+	margin: 0 auto;
+	margin-bottom: 40px;
+}
+.branding img {
+	max-width: 50px;
+	float: left;
+}
+.branding h1{
+	font-size: 60px;
+	text-transform: uppercase;
+	margin: 0;
+	padding-left: 5px;
+	float: left;
+}
+.form-group {
+	margin-bottom: 20px;
+}
+
+#loginBtn {
+	background-color: #70da9d;
+	border: none;
+	font-size: 16px;
+}
+#loginBtn:hover {
+	background-color:#65cf92;
+}
+
+/************** Admin Screen ***************/
+.admin-branding img{
+	max-width: 30px;
+}
+.admin-branding h1{
+	font-size: 30px;
+}
+.admin-branding p {
+	background: #70da9d;
+	color: #fff;
+	float: right;
+	padding: 4px;
+	font-weight: bold;
+	font-size: 13px;
+}
+.admin-branding {
+	margin-top: 30px;
+	margin-bottom: 0;
+	width: 155px;
+	height: 40px;
+}
+.admin-panel {
+	float: left;
+	background: #fff;
+	width: 250px;
+	/*height: 100%;*/
+	-webkit-box-shadow: 0px 4px 5px -3px rgba(173,173,173,1);
+	-moz-box-shadow: 0px 4px 5px -3px rgba(173,173,173,1);
+	box-shadow: 0px 4px 5px -3px rgba(173,173,173,1);
+	position: relative; /* z-index works on specifically positioned elements, needed panel on top because dropdown menus were hiding under the create forms */
+	z-index: 999;
+	
+	/* Set admin panel height to window size */
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+.app-section {
+	margin-top: 20px;
+	-webkit-box-shadow: 0px 4px 5px -3px rgba(173,173,173,1);
+	-moz-box-shadow: 0px 4px 5px -3px rgba(173,173,173,1);
+	box-shadow: 0px 4px 5px -3px rgba(173,173,173,1);
+	border-radius: 2px;
+	background: #fff;
+	min-height: 100px;
+}
+.graph-area {
+	background: #70da9d;
+}
+.app-container {
+	padding: 0 0 0 180px;
+}
+.admin-sidebar-nav {
+	margin: 40px 50px;
+	font-size: 18px;
+}
+.admin-sidebar-nav .dropdown-menu {
+	left: 110px;
+	top: 0;
+	width: 200px;
+}
+.admin-sidebar-nav a.dropdown-toggle {
+	padding: 15px 15px;
+}
+.admin-sidebar-nav a.dropdown-toggle:hover {
+	color: #70da9d;
+}
+.admin-sidebar-nav {
+	-webkit-transform: scale(1);
+	-ms-transform: scale(1);
+	transform: scale(1);   
+	transition: all 0.2s ease;
+}
+.admin-sidebar-nav:hover {
+	-webkit-transform: scale(1.05);
+	-ms-transform: scale(1.05);
+	transform: scale(1.05);
+}
+.admin-sidebar-nav .dropdown-menu {
+	
+}
+.admin-sidebar-nav .dropdown-menu li a {
+	padding: 12px 20px;
+}
+.admin-sidebar-nav i {
+	padding-right: 5px;
+}
+/*i.dropdown-arrow {
+	float: right;
+	font-size: 12px;
+	line-height: 28px;
+}*/
+
+/****************** Create USER form ***********************/
+.create-user-form {
+	padding: 30px;
+	height: auto;
+}
+/****************** Assign USER form ***********************/
+span.multiselect-native-select select {
+	position: static !important;
+}
+span.multiselect-native-select button.multiselect{
+	width: 300px !important;
+	text-align: left !important;
+}
+span.multiselect-native-select button .caret {
+	float: right;
+	margin-top: -10px;
+}
