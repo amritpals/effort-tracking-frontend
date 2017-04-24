@@ -1,23 +1,25 @@
+var baseURL = localStorage.baseURL;
+
 /*
  * createResource function
-*/
+ */
 
 /* Get all Create Form elements */
 var createUserForm = document.getElementById('create-user-form');
 var createProjectForm = document.getElementById('create-project-form');
 var createCategoryForm = document.getElementById('create-category-form');
 /* Assign callback functions when button is pressed */
-if(createUserForm != null){
-    createUserForm.addEventListener("submit", createResource);
+if (createUserForm != null) {
+  createUserForm.addEventListener("submit", createResource);
 }
-if(createProjectForm != null){
-    createProjectForm.addEventListener("submit", createResource);
+if (createProjectForm != null) {
+  createProjectForm.addEventListener("submit", createResource);
 }
-if(createCategoryForm != null){
-    createCategoryForm.addEventListener("submit", createResource);
+if (createCategoryForm != null) {
+  createCategoryForm.addEventListener("submit", createResource);
 }
 
-function createResource(e){
+function createResource(e) {
   e.preventDefault();
 
   /* Create and initialize local variables */
@@ -30,7 +32,7 @@ function createResource(e){
   var httpRequest = null;
 
   /* Detecting current form */
-  if(currentForm == "create-user-form"){
+  if (currentForm == "create-user-form") {
     form = createUserForm;
   } else if (currentForm == "create-project-form") {
     form = createProjectForm;
@@ -59,8 +61,8 @@ function createResource(e){
     console.log('CORS not supported');
     return;
   }
-  httpRequest.onreadystatechange = function(){
-    if(httpRequest.readyState == 4 && httpRequest.status == 200){
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       form.reset();
     }
   }
@@ -74,23 +76,23 @@ function createResource(e){
 
 /*
  * retrieveResource function
-*/
+ */
 var currentPage = this.window.location.pathname;
 var viewUser = "admin-view";
-if(currentPage.includes(viewUser)){
-  getViewUserData('http://localhost:8080/WSRTool/User');
+if (currentPage.includes(viewUser)) {
+  getViewUserData( baseURL + 'User' );
 }
 
-function getViewUserData(url){
+function getViewUserData(url) {
   var method = "GET";
   var httpRequest = createCORSRequest(method, url);
   if (!httpRequest) {
     console.log('CORS not supported');
     return;
   }
-  httpRequest.onreadystatechange = function(){
-    if(httpRequest.readyState == 4 && httpRequest.status == 200){
-      if(currentPage.includes(viewUser)){
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      if (currentPage.includes(viewUser)) {
         var objs = JSON.parse(httpRequest.response);
         var listParent = document.getElementById("user-list");
         var select = document.createElement('select');
@@ -98,20 +100,20 @@ function getViewUserData(url){
         listParent.appendChild(select);
 
         /* Resource select event listener */
-        select.addEventListener("change", function(){
+        select.addEventListener("change", function() {
           var dataLabels = document.getElementById("resource-value");
-          if(dataLabels != null){
+          if (dataLabels != null) {
             dataLabels.reset();
           }
           var resourceId = select.value;
-          for(var key in objs){
-            for(var subkey in objs[key]){
-              if(subkey=="id" && objs[key][subkey]==resourceId){
+          for (var key in objs) {
+            for (var subkey in objs[key]) {
+              if (subkey == "id" && objs[key][subkey] == resourceId) {
                 var resouceToGet = key;
               }
             }
           }
-          for(var i in objs[resouceToGet]){
+          for (var i in objs[resouceToGet]) {
             var label = document.createElement('label');
             var valueLabel = document.createElement('label');
             var br = document.createElement('br');
@@ -128,9 +130,9 @@ function getViewUserData(url){
         });
 
         /* Populate the dropdown list of the resources. */
-        for(var key in objs){
-          for(var subkey in objs[key]){
-            if(subkey=="firstName"){
+        for (var key in objs) {
+          for (var subkey in objs[key]) {
+            if (subkey == "firstName") {
               var option = document.createElement('option');
               option.className = "resource-value";
               option.value = objs[key]['id'];
@@ -167,11 +169,11 @@ function getViewUserData(url){
 
 
 var retrieveForm = document.getElementById('view-form');
-if(retrieveForm != null){
-    retrieveForm.addEventListener("submit", retrieveResource);
+if (retrieveForm != null) {
+  retrieveForm.addEventListener("submit", retrieveResource);
 }
 
-function retrieveResource(e){
+function retrieveResource(e) {
   e.preventDefault();
 
   /* Create and initialize local variables */
@@ -184,7 +186,7 @@ function retrieveResource(e){
   var httpRequest = null;
 
   /* Detecting current form */
-  if(currentForm == "create-user-form"){
+  if (currentForm == "create-user-form") {
     form = createUserForm;
   } else if (currentForm == "create-project-form") {
     form = createProjectForm;
@@ -210,8 +212,8 @@ function retrieveResource(e){
     console.log('CORS not supported');
     return;
   }
-  httpRequest.onreadystatechange = function(){
-    if(httpRequest.readyState == 4 && httpRequest.status == 200){
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       console.log("View Response: " + httpRequest.response);
     }
   }
@@ -225,13 +227,13 @@ function retrieveResource(e){
 
 /*
  * deleteResource function
-*/
+ */
 var deleteForm = document.getElementById('delete-form');
-if(deleteForm != null){
-    deleteForm.addEventListener("submit", deleteResource);
+if (deleteForm != null) {
+  deleteForm.addEventListener("submit", deleteResource);
 }
 
-function deleteResource(e){
+function deleteResource(e) {
   e.preventDefault();
 
   var form = deleteForm;
@@ -246,8 +248,8 @@ function deleteResource(e){
     console.log('CORS not supported');
     return;
   }
-  httpRequest.onreadystatechange = function(){
-    if(httpRequest.readyState == 4 && httpRequest.status == 200){
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       console.log("Delete: " + httpRequest.response);
     }
   }
@@ -261,35 +263,38 @@ function deleteResource(e){
 
 /* Assign Screen JavaScript */
 var assignUser = "admin-assign-user";
-if(currentPage.includes(assignUser)){
-  getAssignProjectData('http://localhost:8080/WSRTool/Project');
-  getAssignUserData('http://localhost:8080/WSRTool/User');
+var assignCategory = "admin-assign-category";
+if (currentPage.includes(assignUser)) {
+  getAssignProjectData(baseURL + 'Project');
+  getAssignUserData(baseURL + 'User');
+} else if (currentPage.includes(assignCategory)) {
+  getAssignProjectData(baseURL + 'Project');
+  getAssignCategoryData(baseURL + 'Category');
 }
-function getAssignProjectData(url){
+
+/* Generic Assign Functions */
+function getAssignProjectData(url) {
   var method = "GET";
   var httpRequest = createCORSRequest(method, url);
   if (!httpRequest) {
     console.log('CORS not supported');
     return;
   }
-  httpRequest.onreadystatechange = function(){
-    if(httpRequest.readyState == 4 && httpRequest.status == 200){
-      if(currentPage.includes(assignUser)){
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      if ( currentPage.includes(assignUser) || currentPage.includes(assignCategory)) {
         var objs = JSON.parse(httpRequest.response);
-
         if (storageAvailable('localStorage')) {
-        	// Yippee! We can use localStorage awesomeness
+          // Yippee! We can use localStorage awesomeness
           localStorage.projectData = httpRequest.response;
+        } else {
+          // Too bad, no localStorage for us
         }
-        else {
-        	// Too bad, no localStorage for us
-        }
-
         var selectProject = document.getElementById("projectSelect");
-        for(var key in objs){
-          for(var subkey in objs[key]){
+        for (var key in objs) {
+          for (var subkey in objs[key]) {
             var options = document.createElement('option');
-            if(subkey == "projectName"){
+            if (subkey == "projectName") {
               options.name = subkey;
               options.value = objs[key]['id'];
               options.innerHTML = objs[key][subkey];
@@ -307,22 +312,23 @@ function getAssignProjectData(url){
   httpRequest.setRequestHeader("Content-Type", "application/json");
   httpRequest.send();
 }
-function getAssignUserData(url){
+
+function getAssignUserData(url) {
   var method = "GET";
   var httpRequest = createCORSRequest(method, url);
   if (!httpRequest) {
     console.log('CORS not supported');
     return;
   }
-  httpRequest.onreadystatechange = function(){
-    if(httpRequest.readyState == 4 && httpRequest.status == 200){
-      if(currentPage.includes(assignUser)){
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      if (currentPage.includes(assignUser)) {
         var objs = JSON.parse(httpRequest.response);
         var selectUser = document.getElementById("userSelect");
-        for(var key in objs){
-          for(var subkey in objs[key]){
+        for (var key in objs) {
+          for (var subkey in objs[key]) {
             var options = document.createElement('option');
-            if(subkey == "firstName"){
+            if (subkey == "firstName") {
               options.value = objs[key]['id'];
               options.innerHTML = objs[key][subkey];
               selectUser.appendChild(options);
@@ -340,26 +346,135 @@ function getAssignUserData(url){
   httpRequest.send();
 }
 
-var assignProjectUser = document.getElementById('assign-user');
-/* Assign callback functions when button is pressed */
-if(assignProjectUser != null){
-    assignProjectUser.addEventListener("submit", fxn_assignProjectUser);
+function getAssignCategoryData(url) {
+  var method = "GET";
+  var httpRequest = createCORSRequest(method, url);
+  if (!httpRequest) {
+    console.log('CORS not supported');
+    return;
+  }
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      if (currentPage.includes(assignCategory)) {
+        var objs = JSON.parse(httpRequest.response);
+        if (storageAvailable('localStorage')) {
+          // Yippee! We can use localStorage awesomeness
+          localStorage.categoryData = httpRequest.response;
+        } else {
+          // Too bad, no localStorage for us
+        }
+        var selectCategory = document.getElementById("categorySelect");
+        for (var key in objs) {
+          for (var subkey in objs[key]) {
+            var options = document.createElement('option');
+            if (subkey == "name") {
+              options.value = objs[key]['id'];
+              options.innerHTML = objs[key][subkey];
+              selectCategory.appendChild(options);
+            }
+          }
+        }
+      }
+    }
+  }
+  httpRequest.onerror = function() {
+    console.log('Woops, there was an error making the request : ');
+  };
+  httpRequest.open(method, url, true);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  httpRequest.send();
 }
-function fxn_assignProjectUser(e){
+
+var assignProjectUser = document.getElementById('assign-user');
+var assignProjectCategory = document.getElementById('assign-category');
+/* Assign callback functions when button is pressed */
+if (assignProjectUser != null) {
+  assignProjectUser.addEventListener("submit", fxn_assignProjectUser);
+} else if (assignProjectCategory != null) {
+  assignProjectCategory.addEventListener("submit", fxn_assignProjectCategory);
+}
+
+/* Assign Users to Project */
+function fxn_assignProjectUser(e) {
   e.preventDefault();
 
   /* Extracting form's data */
   var formData = JSON.parse(queryStringToJsonString($("#assign-user").serialize()));
   var projectData = JSON.parse(localStorage.projectData);
-  console.log(formData['projectSelect']);
-  for(var j in formData){
+  for (var j in formData) {
     console.log(j + " - " + formData[j]);
   }
-  for(var i in projectData){
-    if(formData['projectSelect'] == projectData[i]['id']){
-      console.log(projectData[i]['id']);
+  var projectId = null;
+  for (var i in projectData) {
+    if (formData['projectSelect'] == projectData[i]['id']) {
+      //console.log(projectData[i]);
+      console.log(formData['userSelect']);
+      projectId = i;
+      var userIds = formData['userSelect'].toString().split(",");
+      console.log(userIds);
+      for(var id in userIds){
+        var payload = JSON.stringify(projectData[i]);
+        updateUserProject("PUT", baseURL + "User/"+userIds[id], payload);
+      }
     }
   }
+}
+function updateUserProject(method, url, projectData){
+  var method = method;
+  var httpRequest = createCORSRequest(method, url);
+  if (!httpRequest) {
+    console.log('CORS not supported');
+    return;
+  }
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      console.log(httpRequest.response);
+    }
+  }
+  httpRequest.onerror = function() {
+    console.log('Woops, there was an error making the request : ');
+  };
+  httpRequest.open(method, url, true);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  httpRequest.send(projectData);
+}
 
+/* Assign Task Category to Project */
+function fxn_assignProjectCategory(e) {
+  e.preventDefault();
 
+  /* Extracting form's data */
+  var formData = JSON.parse(queryStringToJsonString($("#assign-category").serialize()));
+  var categoryData = JSON.parse(localStorage.categoryData);
+  for (var k in formData['categorySelect']) {
+    for(var j in categoryData){
+      console.log(formData['categorySelect'][k] + " : " + categoryData[j]['id']);
+      if(formData['categorySelect'][k] == categoryData[j]['id']){
+        var projectId = formData['projectSelect'];
+        var payload = JSON.stringify(categoryData[j]);
+        console.log("here!!");
+        updateProjectCategory("PUT", baseURL + "Project/"+projectId, payload);
+      }
+    }
+  }
+}
+
+function updateProjectCategory(method, url, categoryData){
+  var method = method;
+  var httpRequest = createCORSRequest(method, url);
+  if (!httpRequest) {
+    console.log('CORS not supported');
+    return;
+  }
+  httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      console.log(httpRequest.response);
+    }
+  }
+  httpRequest.onerror = function() {
+    console.log('Woops, there was an error making the request : ');
+  };
+  httpRequest.open(method, url, true);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  httpRequest.send(categoryData);
 }
