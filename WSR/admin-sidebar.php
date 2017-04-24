@@ -15,8 +15,8 @@
   <div class="admin-sidebar-nav dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i>Assign</a>
     <ul class="dropdown-menu">
-      <li><a href="#">Users</a></li>
-      <li><a href="#">Category</a></li>
+      <li><a href="admin-assign-user.php">Users</a></li>
+      <li><a href="admin-assign-category.php">Category</a></li>
     </ul>
   </div>
   <div class="admin-sidebar-nav dropdown">
