@@ -3,7 +3,6 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <script src="js/jquery.bootstrap-dropdown-hover.js"></script>
   <script src="js/bootstrap-multiselect.js"></script>
-  <script src="js/custom.js"></script>
   <script src="js/restapi.js"></script>
   <script src="js/restoperation.js"></script>
   <script type="text/javascript">
