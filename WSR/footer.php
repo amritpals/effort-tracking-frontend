@@ -5,6 +5,7 @@
   <script src="js/bootstrap-multiselect.js"></script>
   <script src="js/restapi.js"></script>
   <script src="js/restoperation.js"></script>
+  <script src="js/assign.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
 
