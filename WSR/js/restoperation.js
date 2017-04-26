@@ -260,27 +260,3 @@ function deleteResource(e) {
   httpRequest.setRequestHeader("Content-Type", encoding);
   httpRequest.send();
 }
-
-
-
-/* testing */
-var view = document.getElementById("view-form");
-if(view!=null){
-  view.addEventListener("submit", function(){
-    viewData("GET", view.action, "application/json");
-  }, false);
-}
-function viewData(method, url, mimeType){
-  var httpRequest = createHttpRequest(method, url);
-
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      console.log("Testing: " + httpRequest.response);
-    }
-  }
-  httpRequest.onerror = function() {
-    console.log('Woops, there was an error making the request : ');
-  };
-
-  sendHttpRequest(httpRequest, method, url, mimeType, null);
-}
