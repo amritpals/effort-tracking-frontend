@@ -58,3 +58,23 @@ function storageAvailable(type) {
 		return false;
 	}
 }
+
+/* Function to generate XMLHttpRequest */
+function createHttpRequest(method, url){
+  var httpRequest = createCORSRequest(method, url);
+  if (!httpRequest) {
+    console.log('CORS not supported');
+    return;
+  }
+  return httpRequest;
+}
+/* Function to send XMLHttpRequest */
+function sendHttpRequest(httpRequest, method, url, mimeType, payload){
+  httpRequest.open(method, url, true);
+  httpRequest.setRequestHeader("Content-Type", mimeType);
+  if(payload == null){
+    httpRequest.send();
+  } else {
+    httpRequest.send(payload);
+  }
+}
