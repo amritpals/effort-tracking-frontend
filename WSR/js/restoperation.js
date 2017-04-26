@@ -261,220 +261,26 @@ function deleteResource(e) {
   httpRequest.send();
 }
 
-/* Assign Screen JavaScript */
-var assignUser = "admin-assign-user";
-var assignCategory = "admin-assign-category";
-if (currentPage.includes(assignUser)) {
-  getAssignProjectData(baseURL + 'Project');
-  getAssignUserData(baseURL + 'User');
-} else if (currentPage.includes(assignCategory)) {
-  getAssignProjectData(baseURL + 'Project');
-  getAssignCategoryData(baseURL + 'Category');
-}
 
-/* Generic Assign Functions */
-function getAssignProjectData(url) {
-  var method = "GET";
-  var httpRequest = createCORSRequest(method, url);
-  if (!httpRequest) {
-    console.log('CORS not supported');
-    return;
-  }
+
+/* testing */
+var view = document.getElementById("view-form");
+if(view!=null){
+  view.addEventListener("submit", function(){
+    viewData("GET", view.action, "application/json");
+  }, false);
+}
+function viewData(method, url, mimeType){
+  var httpRequest = createHttpRequest(method, url);
+
   httpRequest.onreadystatechange = function() {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      if ( currentPage.includes(assignUser) || currentPage.includes(assignCategory)) {
-        var objs = JSON.parse(httpRequest.response);
-        if (storageAvailable('localStorage')) {
-          // Yippee! We can use localStorage awesomeness
-          localStorage.projectData = httpRequest.response;
-        } else {
-          // Too bad, no localStorage for us
-        }
-        var selectProject = document.getElementById("projectSelect");
-        for (var key in objs) {
-          for (var subkey in objs[key]) {
-            var options = document.createElement('option');
-            if (subkey == "projectName") {
-              options.name = subkey;
-              options.value = objs[key]['id'];
-              options.innerHTML = objs[key][subkey];
-              selectProject.appendChild(options);
-            }
-          }
-        }
-      }
+      console.log("Testing: " + httpRequest.response);
     }
   }
   httpRequest.onerror = function() {
     console.log('Woops, there was an error making the request : ');
   };
-  httpRequest.open(method, url, true);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  httpRequest.send();
-}
 
-function getAssignUserData(url) {
-  var method = "GET";
-  var httpRequest = createCORSRequest(method, url);
-  if (!httpRequest) {
-    console.log('CORS not supported');
-    return;
-  }
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      if (currentPage.includes(assignUser)) {
-        var objs = JSON.parse(httpRequest.response);
-        var selectUser = document.getElementById("userSelect");
-        for (var key in objs) {
-          for (var subkey in objs[key]) {
-            var options = document.createElement('option');
-            if (subkey == "firstName") {
-              options.value = objs[key]['id'];
-              options.innerHTML = objs[key][subkey];
-              selectUser.appendChild(options);
-            }
-          }
-        }
-      }
-    }
-  }
-  httpRequest.onerror = function() {
-    console.log('Woops, there was an error making the request : ');
-  };
-  httpRequest.open(method, url, true);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  httpRequest.send();
-}
-
-function getAssignCategoryData(url) {
-  var method = "GET";
-  var httpRequest = createCORSRequest(method, url);
-  if (!httpRequest) {
-    console.log('CORS not supported');
-    return;
-  }
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      if (currentPage.includes(assignCategory)) {
-        var objs = JSON.parse(httpRequest.response);
-        if (storageAvailable('localStorage')) {
-          // Yippee! We can use localStorage awesomeness
-          localStorage.categoryData = httpRequest.response;
-        } else {
-          // Too bad, no localStorage for us
-        }
-        var selectCategory = document.getElementById("categorySelect");
-        for (var key in objs) {
-          for (var subkey in objs[key]) {
-            var options = document.createElement('option');
-            if (subkey == "name") {
-              options.value = objs[key]['id'];
-              options.innerHTML = objs[key][subkey];
-              selectCategory.appendChild(options);
-            }
-          }
-        }
-      }
-    }
-  }
-  httpRequest.onerror = function() {
-    console.log('Woops, there was an error making the request : ');
-  };
-  httpRequest.open(method, url, true);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  httpRequest.send();
-}
-
-var assignProjectUser = document.getElementById('assign-user');
-var assignProjectCategory = document.getElementById('assign-category');
-/* Assign callback functions when button is pressed */
-if (assignProjectUser != null) {
-  assignProjectUser.addEventListener("submit", fxn_assignProjectUser);
-} else if (assignProjectCategory != null) {
-  assignProjectCategory.addEventListener("submit", fxn_assignProjectCategory);
-}
-
-/* Assign Users to Project */
-function fxn_assignProjectUser(e) {
-  e.preventDefault();
-
-  /* Extracting form's data */
-  var formData = JSON.parse(queryStringToJsonString($("#assign-user").serialize()));
-  var projectData = JSON.parse(localStorage.projectData);
-  for (var j in formData) {
-    console.log(j + " - " + formData[j]);
-  }
-  var projectId = null;
-  for (var i in projectData) {
-    if (formData['projectSelect'] == projectData[i]['id']) {
-      //console.log(projectData[i]);
-      console.log(formData['userSelect']);
-      projectId = i;
-      var userIds = formData['userSelect'].toString().split(",");
-      console.log(userIds);
-      for(var id in userIds){
-        var payload = JSON.stringify(projectData[i]);
-        updateUserProject("PUT", baseURL + "User/"+userIds[id], payload);
-      }
-    }
-  }
-}
-function updateUserProject(method, url, projectData){
-  var method = method;
-  var httpRequest = createCORSRequest(method, url);
-  if (!httpRequest) {
-    console.log('CORS not supported');
-    return;
-  }
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      console.log(httpRequest.response);
-    }
-  }
-  httpRequest.onerror = function() {
-    console.log('Woops, there was an error making the request : ');
-  };
-  httpRequest.open(method, url, true);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  httpRequest.send(projectData);
-}
-
-/* Assign Task Category to Project */
-function fxn_assignProjectCategory(e) {
-  e.preventDefault();
-
-  /* Extracting form's data */
-  var formData = JSON.parse(queryStringToJsonString($("#assign-category").serialize()));
-  var categoryData = JSON.parse(localStorage.categoryData);
-  for (var k in formData['categorySelect']) {
-    for(var j in categoryData){
-      console.log(formData['categorySelect'][k] + " : " + categoryData[j]['id']);
-      if(formData['categorySelect'][k] == categoryData[j]['id']){
-        var projectId = formData['projectSelect'];
-        var payload = JSON.stringify(categoryData[j]);
-        console.log("here!!");
-        updateProjectCategory("PUT", baseURL + "Project/"+projectId, payload);
-      }
-    }
-  }
-}
-
-function updateProjectCategory(method, url, categoryData){
-  var method = method;
-  var httpRequest = createCORSRequest(method, url);
-  if (!httpRequest) {
-    console.log('CORS not supported');
-    return;
-  }
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      console.log(httpRequest.response);
-    }
-  }
-  httpRequest.onerror = function() {
-    console.log('Woops, there was an error making the request : ');
-  };
-  httpRequest.open(method, url, true);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  httpRequest.send(categoryData);
+  sendHttpRequest(httpRequest, method, url, mimeType, null);
 }
