@@ -1,3 +1,5 @@
+var currentPage = this.window.location.pathname;
+
 if (storageAvailable('localStorage')) {
   // Yippee! We can use localStorage awesomeness
   localStorage.baseURL = "http://localhost:8080/WSRTool/";
