@@ -4,258 +4,282 @@ function onError(){
   console.log('Woops, there was an error making the request : ');
 }
 
-/* Assign Screen JavaScript */
-// Check the current page
+/******************************************************************************/
+/*********************************************/
+/* Check current page and set function calls */
+/*********************************************/
 var assignUser = "admin-assign-user";
 var assignCategory = "admin-assign-category";
-if (currentPage.includes(assignUser)) {
-  //getAssignProjectData(baseURL + 'Project');
-  getAssignProjectData(baseURL + 'Project', "projectSelect");
-  getAssignProjectData(baseURL + 'Project', "projectRemove");
-  getAssignUserData(baseURL + 'User', "userSelect");
-  getAssignUserData(baseURL + 'User', "userRemove");
-} else if (currentPage.includes(assignCategory)) {
-  getAssignProjectData(baseURL + 'Project');
-  getAssignCategoryData(baseURL + 'Category');
+if(currentPage.includes(assignUser) || currentPage.includes(assignCategory)){
+  adminListProjects(baseURL + "Project");
 }
 
-/*
- * Generic Assign Functions
- */
-
- /*
-  * getAssignProjectData
-  */
-
-function getAssignProjectData(url, operation) {
-  var method = "GET";
-  var httpRequest = createHttpRequest(method, url);
-
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      if ( currentPage.includes(assignUser) || currentPage.includes(assignCategory)) {
-        var objs = JSON.parse(httpRequest.response);
-        if (storageAvailable('localStorage')) {
-          // Yippee! We can use localStorage awesomeness
-          localStorage.projectData = httpRequest.response;
-        } else {
-          // Too bad, no localStorage for us
-        }
-        var selectProject = document.getElementById(operation);
-        for (var key in objs) {
-          for (var subkey in objs[key]) {
-            var options = document.createElement('option');
-            if (subkey == "projectName") {
-              options.name = subkey;
-              options.value = objs[key]['id'];
-              options.innerHTML = objs[key][subkey];
-              selectProject.appendChild(options);
-            }
-          }
-        }
-      }
-    }
-  }
-  httpRequest.onerror = onError;
-
-  sendHttpRequest(httpRequest, method, url, "application/json", null);
-
+/****************************************************/
+/* Add callback functions to submit & change button */
+/****************************************************/
+var assignUserForm = document.getElementById("assign-user");
+if(assignUserForm != null){
+  assignUserForm.addEventListener("submit", saveProjectUser);
+}
+var assignCategoryForm = document.getElementById("assign-category");
+if(assignCategoryForm != null){
+  assignCategoryForm.addEventListener("submit", saveProjectCategory);
 }
 
-/* Change Event Listener on Project dropdown in Allocate & Remove resource */
 var projectSelect = document.getElementById("projectSelect");
-var projectRemove = document.getElementById("projectRemove");
 if(projectSelect != null){
   projectSelect.addEventListener("change", function(){
-    getAssignUserData(baseURL + 'User', "userSelect");
-  });
-}
-if(projectSelect != null){
-  projectRemove.addEventListener("change", function(){
-    getAssignUserData(baseURL + 'User', "userRemove");
+    if(currentPage.includes(assignUser)){
+      refreshUserList();
+    } else {
+      refreshCategoryList();
+    }
   });
 }
 
-function onChangeProjectDropDown(e){
-  console.log(e);
-  if(projectSelect != null){
-    getAssignUserData(baseURL + 'User', "userSelect");
-  }
-  if(projectRemove != null){
-    getAssignUserData(baseURL + 'User', "userRemove");
-  }
-}
+/******************************************************************************/
 
-function getAssignUserData(url, operation) {
+/**************************** Create options functions ************************/
+/***************************************/
+/* Populates the Project dropdown list */
+/***************************************/
+function adminListProjects(url){
   var method = "GET";
   var httpRequest = createHttpRequest(method, url);
 
-  httpRequest.onreadystatechange = function() {
+  httpRequest.onreadystatechange = function(){
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      if (currentPage.includes(assignUser)) {
-        var objs = JSON.parse(httpRequest.response);
-        var selectUser = document.getElementById(operation);
-        var length = selectUser.options.length;
-        for (i = 0; i < length; i++) {
-          selectUser.options[i] = null;
-        }
 
-        var selectProjectType = null;
-        if(operation == "userSelect"){
-          selectProjectType = "projectSelect";
-        } else if (operation == "userRemove") {
-          selectProjectType = "projectRemove";
-        } else {
-          selectProjectType = null;
-        }
-        var selectProject = document.getElementById(selectProjectType);
+      var httpResponse = JSON.parse(httpRequest.response);
+      var projectSelect = document.getElementById("projectSelect");
 
-        //console.log(objs.toSource());
+      // Save Project object data for later use
+      if (storageAvailable('localStorage')) {
+        localStorage.projectData = httpRequest.response;
+      } else {
+        // Too bad, no localStorage for us
+      }
 
-        for (var key in objs) {
-          var allocatedProjectId = (objs[key]["projectId"]==null)?0:objs[key]["projectId"]['id'];
-          var currentSelectedProjectId = parseInt(selectProject.value);
-          for (var subkey in objs[key]) {
-            var options = document.createElement('option');
-            if (subkey == "firstName") {
-              /* Check if the form being updated */
-              if( (selectProjectType == "projectSelect") && (allocatedProjectId == currentSelectedProjectId)){
-                /* Display resources which are allocated to the selected Project */
-                  options.value = objs[key]['id'];
-                  options.innerHTML = objs[key][subkey];
-                  selectUser.appendChild(options);
-              } else if( (selectProjectType == "projectRemove") && (allocatedProjectId != currentSelectedProjectId)){
-                /* Display resources which are not allocated to the selected Project */
-                options.value = objs[key]['id'];
-                options.innerHTML = objs[key][subkey];
-                selectUser.appendChild(options);
-              } else {
-                // nothing
-              }
-            }
+      outerloop:
+      for (var key in httpResponse) {
+        innerloop:
+        for (var subkey in httpResponse[key]) {
+          var options = document.createElement('option');
+          if (subkey == "projectName") {
+            options.name = subkey;
+            options.value = httpResponse[key]['id'];
+            options.innerHTML = httpResponse[key][subkey];
+            projectSelect.appendChild(options);
+            break innerloop;
           }
         }
       }
+      if(currentPage.includes(assignUser)){
+        adminListUsers(baseURL + "User", projectSelect.value);
+      } else {
+        adminListCategories(baseURL + "Category", projectSelect.value);
+      }
     }
   }
-
   httpRequest.onerror = onError;
-
   sendHttpRequest(httpRequest, method, url, "application/json", null);
 }
 
-function getAssignCategoryData(url) {
+/************************************/
+/* Populates the User dropdown list */
+/************************************/
+function adminListUsers(url, currentProjectId){
   var method = "GET";
   var httpRequest = createHttpRequest(method, url);
 
-  httpRequest.onreadystatechange = function() {
+  httpRequest.onreadystatechange = function(){
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      if (currentPage.includes(assignCategory)) {
-        var objs = JSON.parse(httpRequest.response);
-        if (storageAvailable('localStorage')) {
-          // Yippee! We can use localStorage awesomeness
-          localStorage.categoryData = httpRequest.response;
-        } else {
-          // Too bad, no localStorage for us
-        }
-        var selectCategory = document.getElementById("categorySelect");
-        for (var key in objs) {
-          for (var subkey in objs[key]) {
-            var options = document.createElement('option');
-            if (subkey == "name") {
-              options.value = objs[key]['id'];
-              options.innerHTML = objs[key][subkey];
-              selectCategory.appendChild(options);
-            }
+      var httpResponse = JSON.parse(httpRequest.response);
+      var userSelect = document.getElementById("userSelect");
+
+      outerloop:
+      for (var key in httpResponse) {
+        var allocatedProjectId = (httpResponse[key]["project"]==null)?0:httpResponse[key]["project"]['id'];
+        innerloop:
+        for (var subkey in httpResponse[key]) {
+          var options = document.createElement('option');
+          if (
+              ( subkey == "firstName" ) &&
+              ( parseInt(allocatedProjectId) != parseInt(currentProjectId) )
+            ) {
+            options.value = httpResponse[key]['id'];
+            options.innerHTML = httpResponse[key][subkey];
+            userSelect.appendChild(options);
+            break innerloop;
           }
         }
       }
+
     }
   }
-
   httpRequest.onerror = onError;
-
   sendHttpRequest(httpRequest, method, url, "application/json", null);
 }
 
-var assignProjectUser = document.getElementById('assign-user');
-var assignProjectCategory = document.getElementById('assign-category');
-/* Assign callback functions when button is pressed */
-if (assignProjectUser != null) {
-  assignProjectUser.addEventListener("submit", fxn_assignProjectUser);
-} else if (assignProjectCategory != null) {
-  assignProjectCategory.addEventListener("submit", fxn_assignProjectCategory);
+/****************************************/
+/* Populates the Category dropdown list */
+/****************************************/
+function adminListCategories(url){
+  var method = "GET";
+  var httpRequest = createHttpRequest(method, url);
+
+  httpRequest.onreadystatechange = function(){
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      var httpResponse = JSON.parse(httpRequest.response);
+
+      // To find the current project and its relevant data to compare later
+      var projectData = JSON.parse(localStorage.projectData);
+      var currentSelectedProjectId = document.getElementById("projectSelect").value;
+      var currentProjectData = null;
+      for(var key in projectData){
+        if(projectData[key]['id'] == currentSelectedProjectId){
+          currentProjectData = projectData[key];
+          break;
+        }
+      }
+      // Save Category object data for later use
+      if (storageAvailable('localStorage')) {
+        localStorage.categoryData = httpRequest.response;
+      } else {
+        // Too bad, no localStorage for us
+      }
+
+      var categorySelect = document.getElementById("categorySelect");
+      // Flag to find non-duplicate category to show in available list
+      var flag = false;
+      outerloop:
+      for (var key in httpResponse) {
+        innerloop:
+        for(var subkey in currentProjectData.category){
+          if(httpResponse[key]['id'] == currentProjectData.category[subkey]['id']){
+            flag = true;
+            break innerloop;
+          }
+        }
+        if(!flag){
+          // Found non-duplicate category hence display it
+          var options = document.createElement('option');
+          options.value = httpResponse[key]['id'];
+          options.innerHTML = httpResponse[key]['name'];
+          categorySelect.appendChild(options);
+        } else {
+          // Reset the flag
+          flag = false;
+        }
+      }
+
+    }
+  }
+  httpRequest.onerror = onError;
+  sendHttpRequest(httpRequest, method, url, "application/json", null);
 }
 
-/* Assign Users to Project */
-function fxn_assignProjectUser(e) {
+
+/****************************** Save Data functions ***************************/
+/*****************************/
+/* Save the Users to Project */
+/*****************************/
+function saveProjectUser(e){
   e.preventDefault();
-
-  /* Extracting form's data */
-  var formData = JSON.parse(queryStringToJsonString($("#assign-user").serialize()));
+  var userFormData = JSON.parse(queryStringToJsonString($("#assign-user").serialize()));
   var projectData = JSON.parse(localStorage.projectData);
-  for (var j in formData) {
-    console.log(j + " - " + formData[j]);
-  }
-  var projectId = null;
   for (var i in projectData) {
-    if (formData['projectSelect'] == projectData[i]['id']) {
-      //console.log(projectData[i]);
-      console.log(formData['userSelect']);
+    if (userFormData['projectSelect'] == projectData[i]['id']) {
       projectId = i;
-      var userIds = formData['userSelect'].toString().split(",");
-      console.log(userIds);
+      var userIds = userFormData['userSelect'].toString().split(",");
       for(var id in userIds){
         var payload = JSON.stringify(projectData[i]);
-        updateUserProject("PUT", baseURL + "User/"+userIds[id], payload);
+        updateProjectUser("PUT", baseURL + "User/" + userIds[id], payload, userIds[id]);
       }
     }
   }
 }
-function updateUserProject(method, url, projectData){
-
+/* Helper function for updating Project to User */
+function updateProjectUser(method, url, projectData, userId){
   var httpRequest = createHttpRequest(method, url);
-
   httpRequest.onreadystatechange = function() {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      console.log(httpRequest.response);
+      var userSelect = document.getElementById("userSelect");
+      for (var i=0; i<userSelect.length; i++){
+        if (userSelect.options[i].value == userId ){
+          userSelect.remove(i);
+          alert("Resource Allocated Successfully!");
+        }
+      }
     }
   }
-
   httpRequest.onerror = onError;
-
-  sendHttpRequest(httpRequest, method, url, "application/json", null);
+  sendHttpRequest(httpRequest, method, url, "application/json", projectData);
 }
 
-/* Assign Task Category to Project */
-function fxn_assignProjectCategory(e) {
+/**********************************/
+/* Save the Categories to Project */
+/**********************************/
+function saveProjectCategory(e){
   e.preventDefault();
-
-  /* Extracting form's data */
-  var formData = JSON.parse(queryStringToJsonString($("#assign-category").serialize()));
+  var categoryFormData = JSON.parse(queryStringToJsonString($("#assign-category").serialize()));
   var categoryData = JSON.parse(localStorage.categoryData);
-  for (var k in formData['categorySelect']) {
+  for (var k in categoryFormData['categorySelect']) {
     for(var j in categoryData){
-      if(formData['categorySelect'][k] == categoryData[j]['id']){
-        var projectId = formData['projectSelect'];
+      if(categoryFormData['categorySelect'][k] == categoryData[j]['id']){
+        var projectId = categoryFormData['projectSelect'];
         var payload = JSON.stringify(categoryData[j]);
-        updateProjectCategory("PUT", baseURL + "Project/"+projectId, payload);
+        var categoryId = categoryData[j]['id'];
+        updateProjectCategory("PUT", baseURL + "Project/" + projectId, payload, categoryId);
       }
     }
   }
 }
-
-function updateProjectCategory(method, url, categoryData){
-
+/* Helper function for updating Category to Project */
+function updateProjectCategory(method, url, categoryData, categoryId){
   var httpRequest = createHttpRequest(method, url);
-
   httpRequest.onreadystatechange = function() {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      console.log(httpRequest.response);
+      var categorySelect = document.getElementById("categorySelect");
+      for (var i=0; i<categorySelect.length; i++){
+        if (categorySelect.options[i].value == categoryId ){
+          categorySelect.remove(i);
+          alert("Task Category Allocated Successfully!");
+        }
+      }
     }
   }
-
   httpRequest.onerror = onError;
+  sendHttpRequest(httpRequest, method, url, "application/json", categoryData);
+}
 
-  sendHttpRequest(httpRequest, method, url, "application/json", null);
+/****************************** OnChange Callbacks ***************************/
+/************************************************************/
+/* Refresh User list when Project dropdown value is changed */
+/************************************************************/
+function refreshUserList(){
+  // Clear all previous option values
+  var selectUser = document.getElementById("userSelect");
+  var length = selectUser.options.length;
+  for (i = 0; i < length; i++) {
+    selectUser.options[0] = null;
+    // After every delete the previous node gets updated at one above level, hence the options value is always 0
+  }
+  // Update the list again
+  var projectSelect = document.getElementById("projectSelect");
+  adminListUsers(baseURL + "User", projectSelect.value);
+
+}
+
+function refreshCategoryList(){
+  // Clear all previous option values
+  var categorySelect = document.getElementById("categorySelect");
+  var length = categorySelect.options.length;
+  for (i = 0; i < length; i++) {
+    categorySelect.options[0] = null;
+    // After every delete the previous node gets updated at one above level, hence the options value is always 0
+  }
+  // Update the list again
+  var projectSelect = document.getElementById("projectSelect");
+  adminListCategories(baseURL + "Category", projectSelect.value);
 }
