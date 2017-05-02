@@ -77,10 +77,9 @@ function createResource(e) {
 /*
  * retrieveResource function
  */
-var currentPage = this.window.location.pathname;
 var viewUser = "admin-view";
 if (currentPage.includes(viewUser)) {
-  getViewUserData( baseURL + 'User' );
+  //getViewUserData( baseURL + 'User' );
 }
 
 function getViewUserData(url) {
