@@ -6,7 +6,7 @@
 			<div class="page-title add-shadow">
 				<h2>Allocate Task Category</h2>
 			</div>
-			<div class="app-section assign-category-form add-shadow">
+			<div class="app-section assign-form add-shadow">
 				<form id="assign-category">
 					<div class="form-group">
 						<label for="projectSelect">Select Project</label>
