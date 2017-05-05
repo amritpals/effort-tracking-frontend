@@ -173,7 +173,7 @@ ul {
 	color: #fff;
 }
 /****************** Create USER form ***********************/
-.create-user-form, .assign-user-form, .assign-category-form {
+.create-form, .assign-form, .view-form{
 	padding: 30px;
 	height: auto;
 }
