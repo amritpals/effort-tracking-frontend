@@ -97,23 +97,27 @@ function adminListUsers(url, currentProjectId){
       var httpResponse = JSON.parse(httpRequest.response);
       var userSelect = document.getElementById("userSelect");
 
-      outerloop:
-      for (var key in httpResponse) {
-        var allocatedProjectId = (httpResponse[key]["project"]==null)?0:httpResponse[key]["project"]['id'];
-        innerloop:
-        for (var subkey in httpResponse[key]) {
-          var options = document.createElement('option');
-          if (
-              ( subkey == "firstName" ) &&
-              ( parseInt(allocatedProjectId) != parseInt(currentProjectId) )
-            ) {
-            options.value = httpResponse[key]['id'];
-            options.innerHTML = httpResponse[key][subkey];
-            userSelect.appendChild(options);
-            break innerloop;
+      for (var key in httpResponse) { // loop through the user's list
+        var flag = false;
+        if(parseInt(httpResponse[key]["project"].length) > 0){
+
+          for(var projectId in httpResponse[key]["project"]){
+            var id = parseInt(httpResponse[key]["project"][projectId]['id']);
+            if(id == parseInt(currentProjectId)){
+              flag = true;
+              break;
+            }
           }
+
         }
-      }
+        // If resource is not found allocated in the given project
+        if(flag == false){
+          var options = document.createElement('option');
+          options.value = httpResponse[key]['id'];
+          options.innerHTML = httpResponse[key]['firstName'];
+          userSelect.appendChild(options);
+        }
+      } // End of outermostloop
 
     }
   }
