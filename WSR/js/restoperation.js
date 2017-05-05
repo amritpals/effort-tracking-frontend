@@ -64,6 +64,7 @@ function createResource(e) {
   httpRequest.onreadystatechange = function() {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       form.reset();
+      alert("Created Successfully!");
     }
   }
   httpRequest.onerror = function() {
