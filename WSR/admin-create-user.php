@@ -5,7 +5,7 @@
 			<div class="page-title">
 				<h2>Create User</h2>
 			</div>
-			<div class="app-section create-user-form">
+			<div class="app-section create-form">
 				<form action="http://localhost:8080/WSRTool/User/" enctype="application/x-www-form-urlencoded" method="POST" id="create-user-form">
 					<div class="row">
 						<div class="col-md-6">
@@ -28,6 +28,7 @@
 							<div class="form-group">
 								<label for="role">Role</label>
 								<select class="form-control" id="role" name="role">
+									<option value="" selected disabled>Select Role</option>
 									<option value="Manager">Manager</option>
 								  <option value="Technical Lead">Technical Lead</option>
 								  <option value="Engineer">Engineer/Tester</option>
