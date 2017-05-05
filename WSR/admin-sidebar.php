@@ -20,6 +20,13 @@
     </ul>
   </div>
   <div class="admin-sidebar-nav dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-minus-square-o fa-lg" aria-hidden="true"></i>Deallocate</a>
+    <ul class="dropdown-menu">
+      <li><a href="admin-dealloc-user.php">Resource</a></li>
+      <li><a href="admin-dealloc-category.php">Task Category</a></li>
+    </ul>
+  </div>
+  <div class="admin-sidebar-nav dropdown">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-eye fa-lg" aria-hidden="true"></i>View/Update</a>
     <ul class="dropdown-menu">
       <li><a href="admin-view-user.php">Resource</a></li>
