@@ -328,9 +328,7 @@ function getCategoryDetails(){
 function updateUserDetails(e){
   e.preventDefault();
 
-  var userId = document.getElementById("userViewSelect").value;
   var userFormData = JSON.parse(queryStringToJsonString($("#admin-view-user").serialize()));
-
   var userObj = {};
   for(var key in userFormData){
     if(key=="projectName")
@@ -338,19 +336,7 @@ function updateUserDetails(e){
     userObj[key] = decodeURIComponent(userFormData[key]);
   }
 
-  var payload = JSON.stringify(userObj);
-  var method = "PUT";
-  var url = baseURL + "User";
-  var httpRequest = createHttpRequest(method, url);
-
-  httpRequest.onreadystatechange = function(){
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      alert("Resource data updated successfully!");
-      resetForm("userViewForm");
-    }
-  }
-  httpRequest.onerror = onError;
-  sendHttpRequest(httpRequest, method, url, "application/x-www-form-urlencoded", payload);
+  updateDetails("PUT", baseURL + "User", JSON.stringify(userObj), "Resource", "userViewForm");
 }
 
 /***********************************************************/
@@ -359,9 +345,7 @@ function updateUserDetails(e){
 function updateProjectDetails(e){
   e.preventDefault();
 
-  var projectId = document.getElementById("projectViewSelect").value;
   var projectFormData = JSON.parse(queryStringToJsonString($("#admin-view-project").serialize()));
-
   var projectObj = {};
   for(var key in projectFormData){
     if(key=="name")
@@ -369,19 +353,7 @@ function updateProjectDetails(e){
     projectObj[key] = decodeURIComponent(projectFormData[key]);
   }
 
-  var payload = JSON.stringify(projectObj);
-  var method = "PUT";
-  var url = baseURL + "Project";
-  var httpRequest = createHttpRequest(method, url);
-
-  httpRequest.onreadystatechange = function(){
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      alert("Project data updated successfully!");
-      resetForm("projectViewForm");
-    }
-  }
-  httpRequest.onerror = onError;
-  sendHttpRequest(httpRequest, method, url, "application/x-www-form-urlencoded", payload);
+  updateDetails("PUT", baseURL + "Project", JSON.stringify(projectObj), "Project", "projectViewForm");
 }
 
 /************************************************************/
@@ -390,23 +362,27 @@ function updateProjectDetails(e){
 function updateCategoryDetails(e){
   e.preventDefault();
 
-  var categoryId = document.getElementById("categoryViewSelect").value;
   var categoryFormData = JSON.parse(queryStringToJsonString($("#admin-view-category").serialize()));
-
   var categoryObj = {};
   for(var key in categoryFormData){
     categoryObj[key] = decodeURIComponent(categoryFormData[key]);
   }
 
-  var payload = JSON.stringify(categoryObj);
-  var method = "PUT";
-  var url = baseURL + "Category";
+  updateDetails("PUT", baseURL + "Category", JSON.stringify(categoryObj), "Task Category", "categoryViewForm");
+}
+
+
+/*************************************************************/
+/* Generic method to send and handle update request/response */
+/*************************************************************/
+function updateDetails(method, url, payload, objectString, formName){
+
   var httpRequest = createHttpRequest(method, url);
 
   httpRequest.onreadystatechange = function(){
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      alert("Task Category data updated successfully!");
-      resetForm("categoryViewForm");
+      alert(objectString + " updated successfully!");
+      resetForm(formName);
     }
   }
   httpRequest.onerror = onError;
