@@ -20,7 +20,7 @@
     </ul>
   </div>
   <div class="admin-sidebar-nav dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-eye fa-lg" aria-hidden="true"></i>View</a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-eye fa-lg" aria-hidden="true"></i>View/Update</a>
     <ul class="dropdown-menu">
       <li><a href="admin-view-user.php">Resource</a></li>
       <li><a href="admin-view-project.php">Project</a></li>
