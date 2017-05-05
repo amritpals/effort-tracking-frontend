@@ -46,6 +46,40 @@ function queryStringToJsonString(str){
   return (JSON.stringify(result));
 }
 
+/* Convert Object to query string */
+function toQueryString(obj, prefix){
+  var str = [], p;
+  for(p in obj) {
+    if (obj.hasOwnProperty(p)) {
+      var k = prefix ? prefix + "[" + p + "]" : p, v = obj[p];
+      str.push((v !== null && typeof v === "object") ?
+        serialize(v, k) :
+        encodeURIComponent(k) + "=" + encodeURIComponent(v));
+    }
+  }
+  return str.join("&");
+}
+
+/* Convert to JavaScript Object */
+function toObject(arr) {
+  var rv = {};
+  for (var i = 0; i < arr.length; ++i)
+    if (arr[i] !== undefined) rv[i] = arr[i];
+  return rv;
+}
+
+/* Rename the key property of JavaScript Object */
+function renameKeyInObject(newKeyDescriptor, o){
+  for(var old_key in o){
+    var new_key = newKeyDescriptor+old_key;
+    if (old_key !== new_key) {
+      Object.defineProperty(o, new_key,
+          Object.getOwnPropertyDescriptor(o, old_key));
+      delete o[old_key];
+    }
+  }
+  return o;
+}
 
 /* Function to check if the browser supports Storage API */
 function storageAvailable(type) {
