@@ -5,7 +5,7 @@
 			<div class="page-title">
 				<h2>Create Task Category</h2>
 			</div>
-			<div class="app-section create-user-form">
+			<div class="app-section create-form">
 				<form action="http://localhost:8080/WSRTool/Category/" enctype="application/x-www-form-urlencoded" method="POST" id="create-category-form">
 					<div class="row">
 						<div class="col-md-12">  <!-- Start of Column 2 -->
