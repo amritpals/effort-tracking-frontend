@@ -6,7 +6,7 @@
 			<div class="page-title add-shadow">
 				<h2>Allocate Resource</h2>
 			</div>
-			<div class="app-section assign-user-form add-shadow">
+			<div class="app-section assign-form add-shadow">
 				<form id="assign-user">
 					<div class="form-group">
 						<label for="projectSelect">Select Project</label>
