@@ -3,15 +3,14 @@
 
 		<div class="container app-container">
 			<div class="page-title add-shadow">
-				<h2>View/Edit User</h2>
+				<h2>View/Update User</h2>
 				<button type="submit" class="btn btn-primary logout-btn pull-right">Log Out</button>
 			</div>
-			<div class="app-section create-user-form">
+			<div class="app-section view-form">
 				<form id="admin-view-user">
 					<div class="form-group">
 						<label for="userSelect">Select User</label>
-						<select class="form-control" id="userSelect">
-							<<option value="" selected disabled>Select the Resource</option>
+						<select class="form-control" id="userViewSelect">
 						</select>
 					</div>
 
@@ -40,6 +39,7 @@
 							<div class="form-group">
 								<label for="role">Role</label>
 								<select class="form-control" id="role" name="role">
+									<option value="" selected disabled>Select Role</option>
 									<option value="Manager">Manager</option>
 								  <option value="Technical Lead">Technical Lead</option>
 								  <option value="Engineer">Engineer/Tester</option>
@@ -117,16 +117,13 @@
 								<label for="projectName">Allocated Project(s)</label>
 								<input type="text" class="form-control" id="projectName" name="projectName" readonly="readonly">
 								<input type="hidden" class="form-control" id="id" name="id">
-								<input type="hidden" class="form-control" id="billingModel" name="billingModel">
-								<input type="hidden" class="form-control" id="budget" name="budget">
-								<input type="hidden" class="form-control" id="isEnabled" name="isEnabledProject">
-								<input type="hidden" class="form-control" id="intelManagerName" name="intelManagerName">
 							</div>
 
 						</div> <!-- End of second column -->
 
 					</div><!-- End of row 1 -->
-					<button type="submit" class="btn btn-primary">Submit</button>
+					<button type="submit" class="btn btn-primary">Update</button>
+					<button type="button" class="btn btn-primary" id="userViewForm" onclick="resetForm(this.id)">Reset Form</button>
 				</form>
 			</div><!-- End of assign user form -->
 		</div><!-- End of app-container -->
