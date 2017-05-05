@@ -5,7 +5,7 @@
 			<div class="page-title">
 				<h2>Create Project</h2>
 			</div>
-			<div class="app-section create-user-form">
+			<div class="app-section create-form">
 				<form action="http://localhost:8080/WSRTool/Project/" enctype="application/x-www-form-urlencoded" method="POST" id="create-project-form">
 					<div class="row">
 						<div class="col-md-12">
@@ -18,7 +18,8 @@
 							<div class="form-group">
 								<label for="billingModel">Billing Model</label>
 								<select class="form-control" id="billingModel" name="billingModel">
-								  <option value="OBM">Outcome Based Model</option>
+									<option value="" selected disabled>Select Billing Model</option>
+								  <option value="Outcome Based Model">Outcome Based Model</option>
 									<option value="XYZ">XYZ</option>
 								</select>
 							</div>
