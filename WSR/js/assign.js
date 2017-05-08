@@ -112,7 +112,7 @@ function adminListProjects(url, projectSelectorName){
       } else if(currentPage.includes(deallocUser)){
         adminDeallocListUsers(baseURL + "User", projectSelect.value);
       } else {
-        adminDeallocListCategories(baseURL + "Category");
+        adminDeallocListCategories(baseURL + "Project");
       }
     }
   }
@@ -169,47 +169,55 @@ function adminListCategories(url){
 
   httpRequest.onreadystatechange = function(){
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var httpResponse = JSON.parse(httpRequest.response);
-
-      // To find the current project and its relevant data to compare later
-      var projectData = JSON.parse(localStorage.projectData);
-      var currentSelectedProjectId = document.getElementById("projectSelect").value;
-      var currentProjectData = null;
-      for(var key in projectData){
-        if(projectData[key]['id'] == currentSelectedProjectId){
-          currentProjectData = projectData[key];
-          break;
-        }
-      }
       // Save Category object data for later use
       if (storageAvailable('localStorage')) {
         localStorage.categoryData = httpRequest.response;
       } else {
         // Too bad, no localStorage for us
       }
+      var currentSelectedProjectId = document.getElementById("projectSelect").value;
+      url = baseURL + "Project/" + currentSelectedProjectId;
+      getProjectTaskCategories(method, url);
+    }
+  }
+
+  httpRequest.onerror = onError;
+  sendHttpRequest(httpRequest, method, url, "application/json", null);
+}
+
+/******************************************/
+/* Populates the Unassigned Category list */
+/******************************************/
+function getProjectTaskCategories(method, url){
+  var httpRequest = createHttpRequest(method, url);
+  httpRequest.onreadystatechange = function(){
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      var httpResponse = JSON.parse(httpRequest.response);
+      var currentProjectCategoryData = httpResponse.category;
+      var categoryDataSet = JSON.parse(localStorage.categoryData);
 
       var categorySelect = document.getElementById("categorySelect");
-      // Flag to find non-duplicate category to show in available list
-      var flag = false;
-      outerloop:
-      for (var key in httpResponse) {
-        innerloop:
-        for(var subkey in currentProjectData.category){
-          if(httpResponse[key]['id'] == currentProjectData.category[subkey]['id']){
-            flag = true;
-            break innerloop;
-          }
-        }
-        if(!flag){
-          // Found non-duplicate category hence display it
-          var options = document.createElement('option');
-          options.value = httpResponse[key]['id'];
-          options.innerHTML = httpResponse[key]['name'];
-          categorySelect.appendChild(options);
-        } else {
-          // Reset the flag
-          flag = false;
-        }
+
+      currentProjectCategoryData.sort(function(a, b){
+        return parseInt(a.id) - parseInt(b.id);
+      });
+
+      categoryDataSet.sort(function(a, b){
+        return parseInt(a.id) - parseInt(b.id);
+      });
+
+      // Find Unassigned Category objects
+      var result = categoryDataSet.filter(function(x){
+        return !currentProjectCategoryData.some(function(y){
+          return x.id == y.id;
+        });
+      });
+
+      for(var key in result){
+        var options = document.createElement('option');
+        options.value = result[key]['id'];
+        options.innerHTML = result[key]['name'];
+        categorySelect.appendChild(options);
       }
 
     }
@@ -260,44 +268,25 @@ function adminDeallocListUsers(url, currentProjectId){
 /******************************************************************/
 function adminDeallocListCategories(url){
   var method = "GET";
+  var currentSelectedProjectId = document.getElementById("projectDeallocSelect").value;
+  url = url + "/" + currentSelectedProjectId;
   var httpRequest = createHttpRequest(method, url);
+
   httpRequest.onreadystatechange = function(){
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
       var httpResponse = JSON.parse(httpRequest.response);
 
-      // To find the current project and its relevant data to compare later
-      var projectData = JSON.parse(localStorage.projectData);
-      var currentSelectedProjectId = document.getElementById("projectDeallocSelect").value;
-      var currentProjectData = null;
-      for(var key in projectData){
-        if(projectData[key]['id'] == currentSelectedProjectId){
-          currentProjectData = projectData[key];
-          break;
-        }
-      }
-      // Save Category object data for later use
-      if (storageAvailable('localStorage')) {
-        localStorage.categoryData = httpRequest.response;
-      } else {
-        // Too bad, no localStorage for us
-      }
-
       var categorySelect = document.getElementById("categoryDeallocSelect");
-      outerloop:
-      for (var key in httpResponse) {
-        innerloop:
-        for(var subkey in currentProjectData.category){
-          if(httpResponse[key]['id'] == currentProjectData.category[subkey]['id']){
-            var options = document.createElement('option');
-            options.value = httpResponse[key]['id'];
-            options.innerHTML = httpResponse[key]['name'];
-            categorySelect.appendChild(options);
-          }
-        }
+      for (var key in httpResponse.category) {
+        var options = document.createElement('option');
+        options.value = httpResponse.category[key]['id'];
+        options.innerHTML = httpResponse.category[key]['name'];
+        categorySelect.appendChild(options);
       }
 
     }
   }
+
   httpRequest.onerror = onError;
   sendHttpRequest(httpRequest, method, url, "application/json", null);
 }
@@ -309,43 +298,27 @@ function adminDeallocListCategories(url){
 /*****************************/
 function saveProjectUser(e){
   e.preventDefault();
+  var resource = "Resource ";
   if(currentPage.includes(assignUser)){
     var currentForm = "#assign-user";
     var method = "PUT";
     var userSelect = "userSelect";
     var projectSelect = "projectSelect";
-    var action = "Allocated";
+    var action = resource + "Allocated";
   } else {
     var currentForm = "#dealloc-user";
     var method = "DELETE";
     var userSelect = "userDeallocSelect";
     var projectSelect = "projectDeallocSelect";
-    var action = "Deallocated";
+    var action = resource + "Deallocated";
   }
   var userFormData = JSON.parse(queryStringToJsonString($(currentForm).serialize()));
   for(var key in userFormData[userSelect]){
     var projectId = userFormData[projectSelect];
     var userId = userFormData[userSelect][key];
     var url = baseURL + "User/" + userId + "/Project/" + projectId;
-    updateProjectUser(method, url, userId, userSelect, action);
+    allocateDeallocate(method, url, userId, userSelect, action);
   }
-}
-/* Helper function for updating Project to User */
-function updateProjectUser(method, url, userId, userSelectName, action){
-  var httpRequest = createHttpRequest(method, url);
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var userSelect = document.getElementById(userSelectName);
-      for (var i=0; i<userSelect.length; i++){
-        if (userSelect.options[i].value == userId ){
-          userSelect.remove(i);
-          alert("Resource " + action + " Successfully!");
-        }
-      }
-    }
-  }
-  httpRequest.onerror = onError;
-  sendHttpRequest(httpRequest, method, url, "application/json", null);
 }
 
 /**********************************/
@@ -353,55 +326,48 @@ function updateProjectUser(method, url, userId, userSelectName, action){
 /**********************************/
 function saveProjectCategory(e){
   e.preventDefault();
-  var categoryFormData = JSON.parse(queryStringToJsonString($("#assign-category").serialize()));
-  var categoryData = JSON.parse(localStorage.categoryData);
-  for (var k in categoryFormData['categorySelect']) {
-    for(var j in categoryData){
-      if(categoryFormData['categorySelect'][k] == categoryData[j]['id']){
-        var projectId = categoryFormData['projectSelect'];
-        var payload = JSON.stringify(categoryData[j]);
-        var categoryId = categoryData[j]['id'];
-        updateProjectCategory("PUT", baseURL + "Project/" + projectId, payload, categoryId);
-      }
-    }
+  var resource = "Task Category ";
+  if(currentPage.includes(assignCategory)){
+    var currentForm = "#assign-category";
+    var method = "PUT";
+    var projectSelect = "projectSelect";
+    var categorySelect = "categorySelect";
+    var action = resource + "Allocated";
+  } else {
+    var currentForm = "#dealloc-category";
+    var method = "DELETE";
+    var projectSelect = "projectDeallocSelect";
+    var categorySelect = "categoryDeallocSelect";
+    var action = resource + "Deallocated";
+  }
+
+  var categoryFormData = JSON.parse(queryStringToJsonString($(currentForm).serialize()));
+  for (var key in categoryFormData[categorySelect]) {
+    var projectId = categoryFormData[projectSelect];
+    var categoryId = categoryFormData[categorySelect][key];
+    var url = baseURL + "Project/" + projectId + "/Category/" + categoryId;
+    allocateDeallocate(method, url, categoryId, categorySelect, action);
   }
 }
-/* Helper function for updating Category to Project */
-function updateProjectCategory(method, url, categoryData, categoryId){
+
+/*****************************************************************/
+/* Generic Helper function for updating Category/User to Project */
+/*****************************************************************/
+function allocateDeallocate(method, url, id, childSelectName, action){
   var httpRequest = createHttpRequest(method, url);
   httpRequest.onreadystatechange = function() {
     if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var categorySelect = document.getElementById("categorySelect");
-      for (var i=0; i<categorySelect.length; i++){
-        if (categorySelect.options[i].value == categoryId ){
-          categorySelect.remove(i);
-          alert("Task Category Allocated Successfully!");
+      var childSelect = document.getElementById(childSelectName);
+      for (var i=0; i<childSelect.length; i++){
+        if (childSelect.options[i].value == id ){
+          childSelect.remove(i);
+          alert(action + " Successfully!");
         }
       }
     }
   }
   httpRequest.onerror = onError;
-  sendHttpRequest(httpRequest, method, url, "application/json", categoryData);
-}
-
-/**************************** Remove Data functions ***************************/
-/**************************************/
-/* Remove the Categories from Project */
-/**************************************/
-function removeProjectCategory(e){
-  e.preventDefault();
-  var categoryFormData = JSON.parse(queryStringToJsonString($("#assign-category").serialize()));
-  var categoryData = JSON.parse(localStorage.categoryData);
-  for (var k in categoryFormData['categorySelect']) {
-    for(var j in categoryData){
-      if(categoryFormData['categorySelect'][k] == categoryData[j]['id']){
-        var projectId = categoryFormData['projectSelect'];
-        var payload = JSON.stringify(categoryData[j]);
-        var categoryId = categoryData[j]['id'];
-        updateProjectCategory("PUT", baseURL + "Project/" + projectId, payload, categoryId);
-      }
-    }
-  }
+  sendHttpRequest(httpRequest, method, url, "application/json", null);
 }
 
 /****************************** OnChange Callbacks ***************************/
@@ -438,6 +404,6 @@ function refreshCategoryList(projectSelectName, categorySelectName){
   if(projectSelectName == "projectSelect"){
     adminListCategories(baseURL + "Category");
   } else {
-    adminDeallocListCategories(baseURL + "Category");
+    adminDeallocListCategories(baseURL + "Project");
   }
 }
